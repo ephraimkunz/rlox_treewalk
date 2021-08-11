@@ -1,4 +1,5 @@
 use anyhow::{Context, Result};
+use interpreter::Interpreter;
 use std::{
     cmp, env, fs,
     io::{self, BufRead, Write},
@@ -10,6 +11,7 @@ use parser::Parser;
 use scanner::Scanner;
 
 mod ast;
+mod interpreter;
 mod parser;
 mod scanner;
 
@@ -42,7 +44,8 @@ fn run(source: &str) -> Result<()> {
 
     let parser = Parser::new(tokens);
     let expr = parser.parse()?;
-    println!("{}", AstPrinter.print(&expr));
+    Interpreter.interpret(&expr)?;
+
     Ok(())
 }
 

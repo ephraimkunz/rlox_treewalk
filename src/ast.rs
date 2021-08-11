@@ -19,20 +19,20 @@ pub enum Expression<'a> {
 
 pub trait Visitor {
     type E;
-    fn visit_expresssion(&self, expr: &Expression) -> Self::E;
+    fn visit_expression(&self, expr: &Expression) -> Self::E;
 }
 
 pub struct AstPrinter;
 
 impl AstPrinter {
     pub fn print(&self, expr: &Expression) -> String {
-        self.visit_expresssion(expr)
+        self.visit_expression(expr)
     }
 }
 
 impl Visitor for AstPrinter {
     type E = String;
-    fn visit_expresssion(&self, e: &Expression) -> Self::E {
+    fn visit_expression(&self, e: &Expression) -> Self::E {
         match e {
             Expression::Binary {
                 l_expr,
@@ -41,13 +41,13 @@ impl Visitor for AstPrinter {
             } => format!(
                 "(Binary {:?} {} {})",
                 operator,
-                self.visit_expresssion(l_expr),
-                self.visit_expresssion(r_expr)
+                self.visit_expression(l_expr),
+                self.visit_expression(r_expr)
             ),
-            Expression::Grouping { expr } => format!("(Grouping {})", self.visit_expresssion(expr)),
+            Expression::Grouping { expr } => format!("(Grouping {})", self.visit_expression(expr)),
             Expression::Literal { token } => format!("(Literal {:?})", token),
             Expression::Unary { operator, r_expr } => {
-                format!("(Unary {:?} {})", operator, self.visit_expresssion(r_expr))
+                format!("(Unary {:?} {})", operator, self.visit_expression(r_expr))
             }
         }
     }
