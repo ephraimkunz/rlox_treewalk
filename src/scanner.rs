@@ -2,9 +2,9 @@ use std::collections::HashMap;
 use std::iter::FromIterator;
 
 use crate::error;
+use anyhow::Result;
 use once_cell::unsync::Lazy;
 use TokenType::*;
-use anyhow::Result;
 
 #[derive(Debug)]
 pub struct Scanner<'a> {
@@ -35,7 +35,7 @@ impl<'a> Scanner<'a> {
         }
 
         if self.has_error {
-            return Err(anyhow::anyhow!("error while scanning"))
+            return Err(anyhow::anyhow!("error while scanning"));
         }
 
         self.tokens.push(Token::new(Eof, "", self.line));
@@ -236,7 +236,7 @@ impl<'a> Scanner<'a> {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum TokenType<'a> {
     // Single character tokens.
     LeftParen,
@@ -287,11 +287,11 @@ pub enum TokenType<'a> {
     Eof,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Token<'a> {
-    token_type: TokenType<'a>,
-    lexeme: &'a str,
-    line: usize,
+    pub token_type: TokenType<'a>,
+    pub lexeme: &'a str,
+    pub line: usize,
 }
 
 impl<'a> Token<'a> {

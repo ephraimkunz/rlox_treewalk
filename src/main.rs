@@ -5,8 +5,12 @@ use std::{
     process,
 };
 
+use ast::AstPrinter;
+use parser::Parser;
 use scanner::Scanner;
 
+mod ast;
+mod parser;
 mod scanner;
 
 fn main() -> Result<()> {
@@ -34,12 +38,11 @@ fn run_file(path: &str) -> Result<()> {
 
 fn run(source: &str) -> Result<()> {
     let mut scanner = Scanner::new(source);
-    let tokens = scanner.scan_tokens();
+    let tokens = scanner.scan_tokens()?;
 
-    for token in tokens {
-        println!("{:?}", token);
-    }
-
+    let parser = Parser::new(tokens);
+    let expr = parser.parse()?;
+    println!("{}", AstPrinter.print(&expr));
     Ok(())
 }
 
@@ -55,7 +58,9 @@ fn run_prompt() -> Result<()> {
         stdout.flush()?;
 
         stdin.lock().read_line(&mut line)?;
-        let _ = run(&line); // Ignore errors.
+        if let Err(e) = run(&line) {
+            eprint!("{}", e);
+        };
     }
 }
 
